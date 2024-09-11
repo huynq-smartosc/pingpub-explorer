@@ -60,6 +60,19 @@ function pageload(pageNum: number) {
 
 }
 
+function fetchAckTxs(channel: string, port: string, pageNum = 0) {
+  page.value.setPage(pageNum)
+  loading.value = true
+  direction.value = 'Out'
+  channel_id.value = channel
+  port_id.value = port
+  txs.value = {} as PaginatedTxs
+  chainStore.rpc.getTxs("?order_by=2&events=acknowledge_packet.packet_src_channel='{channel}'&events=acknowledge_packet.packet_src_port='{port}'", { channel, port }, page.value).then(res => {
+    txs.value = res
+  })
+    .finally(() => loading.value = false)
+}
+
 function fetchSendingTxs(channel: string, port: string, pageNum = 0) {
 
   page.value.setPage(pageNum)
@@ -218,6 +231,12 @@ function color(v: string) {
               <td>
                 <div class="flex gap-1">
                   <button class="btn btn-xs"
+                    @click="fetchAckTxs(v[ibcStore.sourceField].channel_id, v[ibcStore.sourceField].port_id)"
+                    :disabled="loading">
+                    <span v-if="loading" class="loading loading-spinner loading-sm"></span>
+                    Ack
+                  </button>
+                  <button class="btn btn-xs"
                     @click="fetchSendingTxs(v[ibcStore.sourceField].channel_id, v[ibcStore.sourceField].port_id)"
                     :disabled="loading">
                     <span v-if="loading" class="loading loading-spinner loading-sm"></span>
@@ -241,6 +260,14 @@ function color(v: string) {
             <tr v-for="v in channels">
               <td>
                 <div class="flex gap-1">
+                  <button class="btn btn-xs" @click="fetchAckTxs(v.channel_id, v.port_id)" :disabled="loading">
+                    <span v-if="loading" class="loading loading-spinner loading-sm"></span>
+                    Ack
+                  </button>
+                  <!-- <button class="btn btn-xs" @click="fetchAckOutTxs(v.channel_id, v.port_id)" :disabled="loading">
+                    <span v-if="loading" class="loading loading-spinner loading-sm"></span>
+                    Ack Out
+                  </button> -->
                   <button class="btn btn-xs" @click="fetchSendingTxs(v.channel_id, v.port_id)" :disabled="loading">
                     <span v-if="loading" class="loading loading-spinner loading-sm"></span>
                     {{ $t('ibc.btn_out') }}
