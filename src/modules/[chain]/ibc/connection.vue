@@ -10,7 +10,7 @@ import type { IBCPath } from '@ping-pub/chain-registry-client/dist/types';
 import router from '@/router';
 import { useIBCModule } from './connStore';
 
-const props = defineProps(['chain']);
+const props = defineProps(['chain', 'connection_id']);
 const chainStore = useBlockchain();
 const ibcStore = useIBCModule()
 const list = ref([] as Connection[]);
@@ -29,7 +29,7 @@ function pageload(p: number) {
     list.value = x.connections;
     pageResponse.value = x.pagination
     if(x.pagination.total && Number(x.pagination.total) > 0) {
-      ibcStore.showConnection(0)
+      ibcStore.showConnection(props.connection_id || 0)
     }
   });
 }

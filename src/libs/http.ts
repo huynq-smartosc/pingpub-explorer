@@ -4,9 +4,13 @@ export async function fetchData<T>(
   url: string,
   adapter: (source: any) => Promise<T>
 ): Promise<T> {
-  const response = await fetch(url);
+  let response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`HTTP error: ${response.status}`);
+    const response2 = await fetch(url.replaceAll('events=', 'query='));
+    if (!response2.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+    response = response2;
   }
   const data = await response.json();
   return adapter(data);
