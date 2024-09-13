@@ -134,7 +134,7 @@ function color(v: string) {
               {{ clientState.client_state?.chain_id }}
             </div>
             <div class="text-sm text-gray-500 dark:text-gray-400">
-              {{ conn.counterparty?.connection_id }} {{ clientState.client_id }}
+              {{ conn.counterparty?.connection_id }} {{ conn.counterparty?.client_id }}
             </div>
           </div>
         </dl>
@@ -264,10 +264,6 @@ function color(v: string) {
                     <span v-if="loading" class="loading loading-spinner loading-sm"></span>
                     Ack
                   </button>
-                  <!-- <button class="btn btn-xs" @click="fetchAckOutTxs(v.channel_id, v.port_id)" :disabled="loading">
-                    <span v-if="loading" class="loading loading-spinner loading-sm"></span>
-                    Ack Out
-                  </button> -->
                   <button class="btn btn-xs" @click="fetchSendingTxs(v.channel_id, v.port_id)" :disabled="loading">
                     <span v-if="loading" class="loading loading-spinner loading-sm"></span>
                     {{ $t('ibc.btn_out') }}
